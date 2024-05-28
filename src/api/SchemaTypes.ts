@@ -1,12 +1,154 @@
 /**
+ * Represents simple language scalar types allowed for object properties.
+ */
+export type ScalarLangType = string | number| bigint | boolean;
+
+/**
+ * Represents NULL language types. This just combines `null` and `undefined`.
+ */
+export type NullLangType = null | undefined;
+
+/**
+ * Represents language-specific scalar types used to work with class properties.
+ */
+export type LangType = ScalarLangType | {[P: string]: LangType} | LangType[] | NullLangType;
+
+
+
+/**
+ * Represents data types corresponding to string property types:
+ *   - "str" - string
+ *   - "clob" - character-based large object
+ */
+export type StringDataType = "str" | "clob";
+
+/**
+ * Represents data types corresponding to temporal property types:
+ *   - "date" - date only
+ *   - "time" - time only
+ *   - "datetime" - datetime
+ *   - "timestamp" - timestamp
+ */
+export type TemporalDataType = "date" | "time" | "datetime" | "timestamp";
+
+/**
+ * Represents underlying data types corresponding to integer property types:
+ *   - "int" - signed or unsigned integer of different sizes
+ *   - "bigint" - signed or unsigned integer of different sizes
+ *   - "bit" - bit-values
+ *   - "year" - 4-digit year
+ */
+export type IntegerDataType = "int" | "bigint" | "bit" | "year";
+
+/**
+ * Represents underlying data types corresponding to real (floating or fixed point) property types:
+ *   - "real" - floating-point numbers of single or double precision
+ *   - "dec" - fixed-point numbers (DECIMAL/NUMERIC)
+ */
+export type RealDataType = "real" | "dec"
+
+/**
+ * Represents underlying data types corresponding to big integer property types:
+ *   - "bigint" - signed or unsigned integer of different sizes
+ *   - "bit" - bit-values
+ */
+export type BigintDataType = "bigint" | "bit";
+
+/**
+ * Combines integer and real data types in one definition for convenience
+ */
+export type NumericDataType = IntegerDataType | RealDataType
+
+/**
+ * Represents underlying data types corresponding to Boolean property types:
+ *   - "bool" - boolean
+ */
+export type BoolDataType ="bool";
+
+/**
+ * Represents underlying data types corresponding to any property types except Boolean:
+ */
+export type NonBoolDataType = StringDataType | NumericDataType | TemporalDataType;
+
+/**
+ * Combines data types representing scalar values.
+ */
+export type ScalarDataType = StringDataType | NumericDataType | TemporalDataType | BoolDataType;
+
+/**
+ * Represents underlying data types corresponding to property types:
+ * - string properties:
+ *   - "str" - string
+ *   - "clob" - character-based large object
+ *   - "date" - date only
+ *   - "time" - time only
+ *   - "datetime" - datetime
+ *   - "timestamp" - timestamp
+ * - numeric properties
+ *   - "int" - signed or unsigned integer of different sizes
+ *   - "real" - floating-point numbers of single or double precision
+ *   - "dec" - fixed-point numbers (DECIMAL/NUMERIC)
+ *   - "year" - 4-digit year
+ * - bigint properties
+ *   - "bigint" - signed or unsigned integer of different sizes
+ *   - "bit" - bit-values
+ * - boolean properties
+ *   - "bool" - boolean
+ * - Special properties
+ *   - "link" - single link
+ *   - "multilink" - multi-link
+ *   - "obj" - structured object
+ *   - "arr" - array
+ */
+export type DataType = ScalarDataType | "link" | "multilink" | "obj" | "arr" | "any";
+
+
+
+/** Combines Data and language types */
+export type DataOrLangType = DataType | LangType;
+
+
+
+/**
+ * Represents data type corresponding to the given language type
+ */
+export type DataTypeOf<T extends LangType> =
+    // T extends SqlTime ? "time" :
+    T extends string ? "str" | "clob" | "date" | "time" | "datetime" | "timestamp" :
+    T extends number ? "int" | "real" | "dec" | "year" :
+    T extends bigint ? "bigint" | "bit" :
+    T extends boolean ? "bool" :
+    T extends Array<LangType> ? "multilink" | "arr" :
+    T extends Record<string,LangType> ? "link" | "obj" :
+    undefined
+
+
+
+/**
+ * Maps data types to language types used to represent them.
+ */
+export type LangTypeOf<DT extends DataType | undefined | null> =
+    DT extends StringDataType | TemporalDataType ? string :
+    DT extends BigintDataType ? bigint : // this line must be before NumericDataType to take effect
+    DT extends NumericDataType ? number :
+    DT extends BoolDataType ? boolean :
+    DT extends undefined ? undefined :
+    DT extends null ? null :
+    DT extends "multilink" | "arr" ? LangType[] :
+    DT extends "link" | "obj" ? Record<string,LangType> :
+    never;
+
+
+
+/**
  * Defines property definition attributes that are common for all data types
  */
 export type CommonPropDef =
 {
-    // /**
-    //  * Property's data type that determines its structure and meaning.
-    //  */
-    // dt: DataType,
+    /**
+     * Property's data type that determines its structure and meaning.
+     */
+    dt: DataType,
 
     /**
      * Determines whether the field must have a non-null value in the repository.
@@ -155,15 +297,15 @@ export type YearPropDef = CommonPropDef &
 //     elm: PropDef<M, E>;
 // }
 
-// /**
-//  * Helper type with all template parameters set to `any`. This is needed for easier referencing
-//  * in other type definitions.
-//  */
-// export type ALinkPropDef = CommonPropDef &
-// {
-//     dt: "link";
-//     target: string;
-// }
+/**
+ * Helper type with all template parameters set to `any`. This is needed for easier referencing
+ * in other type definitions.
+ */
+export type ALinkPropDef = CommonPropDef &
+{
+    dt: "link";
+    target: string;
+}
 
 // /**
 //  * Contains attributes defining behavior of a single link property.
