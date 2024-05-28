@@ -1,0 +1,17 @@
+{
+    "readme": "none",
+    "name": "Neshek Reference",
+    "githubPages": false,
+    "excludeExternals": true,
+    "excludeInternal": true,
+    "excludePrivate": true,
+    "disableSources": true,
+    "hideGenerator": true,
+    "includeVersion": true,
+    "includes": "./src/typedoc",
+    "out": "./web/reference",
+    "entryPointStrategy": "expand",
+    "entryPoints": [
+        "./src/api/"
+    ]
+}
