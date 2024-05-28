@@ -1,8 +1,8 @@
-import { SchemaDef } from "../index"
-import { MyModel } from "./TestModel"
+// import { SchemaDef } from "../index"
+// import { MyModel } from "./TestModel"
 
 
-export let mySchema: SchemaDef<MyModel> = {
+export let mySchema = {
     classes: {
         Order : {
             props: {

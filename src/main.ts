@@ -1,11 +1,3 @@
-import { testExpressionAPI } from "./api/ExpressionAPI";
-import { testDBRepository_insert_get } from "./test/TestDBRepository";
-import { testSampleRdbAdapter_insert_get } from "./test/TestSampleRdbAdapter";
+import * as neshek from "./index"
 
-
-
-// testSampleRdbAdapter_insert_get();
-testDBRepository_insert_get();
-// testExpressionAPI();
-
-
+console.log("Hello!")
