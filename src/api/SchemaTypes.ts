@@ -104,6 +104,22 @@ export type DataType = ScalarDataType | "link" | "multilink" | "obj" | "arr" | "
 
 
 
+/**
+ * Represents possible types of properties in primary keys and unique constraints. These can be
+ * one of the following:
+ * - Simple scalar types: string, number, boolean, bigint and Date
+ * - Class types, which represent single links
+ */
+export type KeyPropDataType = ScalarDataType | ClassDef;
+
+/**
+ * Represents a structure (object) where keys are strings and values are one of the property types
+ * allowed in primary keys and unique constraints.
+ */
+export type KeyDataType = { [P: string]: KeyPropDataType }
+
+
+
 /** Combines Data and language types */
 export type DataOrLangType = DataType | LangType;
 
@@ -137,6 +153,20 @@ export type LangTypeOf<DT extends DataType | undefined | null> =
     DT extends "multilink" | "arr" ? LangType[] :
     DT extends "link" | "obj" ? Record<string,LangType> :
     never;
+
+
+
+export type ClassDef =
+{
+    /** Class name */
+    name: string;
+
+    /** Primary key type; `true` means the class has the standard i8 key named "id" */
+    key?: KeyDataType | true;
+
+    /** Unique constraints */
+    unique?: KeyDataType[];
+}
 
 
 
